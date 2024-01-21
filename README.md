@@ -1,6 +1,6 @@
 # Stream: An Interactive Messaging Hub
 
-Stream is an innovative messaging application designed to streamline communication through text messages. Seamlessly integrated with Twilio, Stream allows users to send messages to a designated phone number, which are then efficiently stored in a secure database. With a user-friendly frontend, Stream provides an intuitive interface to explore and interact with all the messages sent to the bulletin.
+Stream is a comprehensive messaging platform designed to seamlessly capture, organize, and present text messages in real-time. The project consists of a backend built with Koa.js, which serves as a secure intermediary between Twilio-enabled phone numbers and an SQLite database. On the frontend, a dynamic React application provides users with an interactive interface to explore and interact with the messages stored in the database.
 
 <!-- [![Watch the Demo Video](https://img.youtube.com/vi/D9I9Ok4Qszw/0.jpg)](https://www.youtube.com/watch?v=D9I9Ok4Qszw) -->
 
