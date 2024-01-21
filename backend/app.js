@@ -45,37 +45,52 @@ app.use(helmet());
 // Use body parser middleware
 app.use(bodyParser());
 
-// Sanitize inputs
+// Middleware for sanitizing inputs
 const sanitizeInputsMiddleware = async (ctx, next) => {
-  // Sanitize and validate inputs
   ctx.request.body.From = sanitizePhoneNumber(ctx.request.body.From);
   ctx.request.body.Body = sanitizeTextMessage(ctx.request.body.Body);
 
-  // Continue to the next middleware or route
   await next();
 };
 
-// Endpoint to handle incoming SMS
-router.post("/sms", sanitizeInputsMiddleware, async (ctx) => {
-  const { From, Body } = ctx.request.body;
+// Middleware for phone number verification
+const verifyPhoneNumber = async (ctx, next) => {
+  const senderPhoneNumber = ctx.request.body.From;
 
-  if (From === process.env.TWILIO_REGISTERED_PHONE_NUMBER)
-    // Store the received text in the SQLite database
-    db.run(
-      "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
-      [From, Body],
-      (err) => {
-        if (err) {
-          console.error("Error inserting into database:", err.message);
-          ctx.status = 500;
-          ctx.body = "Internal Server Error";
-        } else {
-          console.log("Text stored in database:", Body);
-          ctx.body = "Text received and stored successfully.";
+  if (senderPhoneNumber === process.env.TWILIO_REGISTERED_PHONE_NUMBER) {
+    await next();
+  } else {
+    ctx.status = 403; // Forbidden
+    ctx.body = "Phone number is not verified.";
+  }
+};
+
+// Endpoint to handle incoming SMS
+router.post(
+  "/sms",
+  sanitizeInputsMiddleware,
+  verifyPhoneNumber,
+  async (ctx) => {
+    const { From, Body } = ctx.request.body;
+
+    if (From === process.env.TWILIO_REGISTERED_PHONE_NUMBER)
+      // Store the received text in the SQLite database
+      db.run(
+        "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
+        [From, Body],
+        (err) => {
+          if (err) {
+            console.error("Error inserting into database:", err.message);
+            ctx.status = 500;
+            ctx.body = "Internal Server Error";
+          } else {
+            console.log("Text stored in database:", Body);
+            ctx.body = "Text received and stored successfully.";
+          }
         }
-      }
-    );
-});
+      );
+  }
+);
 
 // Use the router middleware
 app.use(router.routes());
