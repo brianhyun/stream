@@ -1,0 +1,32 @@
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+
+# Dependency directories
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache directory
+.npm
+
+# dotenv environment variables file
+.env
+
+# Build files
+/build/
+
+# Local development environment
+.env.local
+
+# IDE files
+.idea
+.vscode
+
+# OS-specific files
+.DS_Store
+Thumbs.db
