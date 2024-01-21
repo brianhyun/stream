@@ -59,7 +59,7 @@ const sanitizeInputsMiddleware = async (ctx, next) => {
 router.post("/sms", sanitizeInputsMiddleware, async (ctx) => {
   const { From, Body } = ctx.request.body;
 
-  if (From === "+16266228188")
+  if (From === process.env.TWILIO_REGISTERED_PHONE_NUMBER)
     // Store the received text in the SQLite database
     db.run(
       "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
