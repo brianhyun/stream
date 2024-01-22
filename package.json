@@ -1,0 +1,15 @@
+{
+  "name": "stream",
+  "version": "1.0.0",
+  "description": "Stream is a comprehensive messaging platform designed to seamlessly capture, organize, and present text messages in real-time. The project consists of a backend built with Koa.js, which serves as a secure intermediary between Twilio-enabled phone numbers and an SQLite database. On the frontend, a dynamic React application provides users with an interactive interface to explore and interact with the messages stored in the database.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run start:frontend & npm run start:backend",
+    "start:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

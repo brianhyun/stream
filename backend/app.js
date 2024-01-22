@@ -1,13 +1,13 @@
-const Koa = require("koa");
-const Router = require("koa-router");
-const ngrok = require("@ngrok/ngrok");
-const bodyParser = require("koa-bodyparser");
-const helmet = require("koa-helmet");
-// const sslify = require("koa-sslify").default;
-const db = require("./db"); // Import the SQLite database connection module
+import Koa from "koa";
+import Router from "koa-router";
+import helmet from "koa-helmet";
+import ngrok from "@ngrok/ngrok";
+// import sslify from "koa-sslify";
+import bodyParser from "koa-bodyparser";
+import db from "./db.js"; // Import the SQLite database connection module
 
 // Load environmental variables
-require("dotenv").config();
+import "dotenv/config";
 
 // Establish ngrok connection
 (async function () {
@@ -37,7 +37,7 @@ const app = new Koa();
 const router = new Router();
 
 // Use SSL/TLS
-// app.use(sslify());
+// app.use(sslify.default());
 
 // Use helmet for general security headers
 app.use(helmet());
