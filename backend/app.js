@@ -1,4 +1,5 @@
 import Koa from "koa";
+import cors from "@koa/cors";
 import Router from "koa-router";
 import helmet from "koa-helmet";
 import ngrok from "@ngrok/ngrok";
@@ -39,6 +40,9 @@ const router = new Router();
 // Use SSL/TLS
 // app.use(sslify.default());
 
+// Apply CORS middleware
+app.use(cors());
+
 // Use helmet for general security headers
 app.use(helmet());
 
@@ -74,23 +78,53 @@ router.post(
     const { From, Body } = ctx.request.body;
 
     if (From === process.env.TWILIO_REGISTERED_PHONE_NUMBER)
-      // Store the received text in the SQLite database
-      db.run(
-        "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
-        [From, Body],
-        (err) => {
-          if (err) {
-            console.error("Error inserting into database:", err.message);
-            ctx.status = 500;
-            ctx.body = "Internal Server Error";
-          } else {
-            console.log("Text stored in database:", Body);
-            ctx.body = "Text received and stored successfully.";
+      try {
+        // Store the received text in the SQLite database
+        db.run(
+          "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
+          [From, Body],
+          (err) => {
+            if (err) {
+              console.error("Error inserting into database:", err.message);
+              ctx.status = 500;
+              ctx.body = "Internal Server Error";
+            } else {
+              console.log("Text stored in database:", Body);
+              ctx.body = "Text received and stored successfully.";
+            }
           }
-        }
-      );
+        );
+      } catch (error) {
+        console.error("Unexpected error:", error.message);
+        ctx.status = 500; // Internal Server Error
+        ctx.body = "Internal Server Error";
+      }
   }
 );
+
+// Endpoint to retrieve all the texts
+router.get("/api/texts", async (ctx) => {
+  console.log("api called");
+
+  try {
+    // Use the SELECT statement to retrieve all entries
+    db.all("SELECT * FROM texts", (err, rows) => {
+      if (err) {
+        console.error("Error retrieving data from database:", err.message);
+        ctx.status = 500; // Internal Server Error
+        ctx.body = "Internal Server Error";
+      } else {
+        // Send the retrieved entries as the response
+        console.log(rows);
+        ctx.body = rows;
+      }
+    });
+  } catch (error) {
+    console.error("Unexpected error:", error.message);
+    ctx.status = 500; // Internal Server Error
+    ctx.body = "Internal Server Error";
+  }
+});
 
 // Use the router middleware
 app.use(router.routes());
