@@ -1,8 +1,10 @@
 import Koa from "koa";
+import util from "util";
 import cors from "@koa/cors";
 import Router from "koa-router";
 import helmet from "koa-helmet";
 import ngrok from "@ngrok/ngrok";
+import sqlstring from "sqlstring";
 // import sslify from "koa-sslify";
 import bodyParser from "koa-bodyparser";
 import db from "./db.js"; // Import the SQLite database connection module
@@ -49,14 +51,6 @@ app.use(helmet());
 // Use body parser middleware
 app.use(bodyParser());
 
-// Middleware for sanitizing inputs
-const sanitizeInputsMiddleware = async (ctx, next) => {
-  ctx.request.body.From = sanitizePhoneNumber(ctx.request.body.From);
-  ctx.request.body.Body = sanitizeTextMessage(ctx.request.body.Body);
-
-  await next();
-};
-
 // Middleware for phone number verification
 const verifyPhoneNumber = async (ctx, next) => {
   const senderPhoneNumber = ctx.request.body.From;
@@ -69,56 +63,55 @@ const verifyPhoneNumber = async (ctx, next) => {
   }
 };
 
-// Endpoint to handle incoming SMS
-router.post(
-  "/sms",
-  sanitizeInputsMiddleware,
-  verifyPhoneNumber,
-  async (ctx) => {
-    const { From, Body } = ctx.request.body;
-
-    if (From === process.env.TWILIO_REGISTERED_PHONE_NUMBER)
-      try {
-        // Store the received text in the SQLite database
-        db.run(
-          "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
-          [From, Body],
-          (err) => {
-            if (err) {
-              console.error("Error inserting into database:", err.message);
-              ctx.status = 500;
-              ctx.body = "Internal Server Error";
-            } else {
-              console.log("Text stored in database:", Body);
-              ctx.body = "Text received and stored successfully.";
-            }
-          }
-        );
-      } catch (error) {
-        console.error("Unexpected error:", error.message);
-        ctx.status = 500; // Internal Server Error
-        ctx.body = "Internal Server Error";
-      }
-  }
-);
+const sanitizeInput = (input) => {
+  return sqlstring.escape(input).replace(/^'|'$/g, "");
+};
 
 // Endpoint to retrieve all the texts
-router.get("/api/texts", async (ctx) => {
-  console.log("api called");
+const dbAllAsync = util.promisify(db.all.bind(db));
 
+// Endpoint to handle incoming SMS
+router.post("/api/sms", verifyPhoneNumber, async (ctx) => {
+  const { From, Body } = ctx.request.body;
+
+  if (From === process.env.TWILIO_REGISTERED_PHONE_NUMBER)
+    try {
+      // Store the received text in the SQLite database
+      db.run(
+        "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
+        [sanitizeInput(From), sanitizeInput(Body)],
+        (err) => {
+          if (err) {
+            console.error("Error inserting into database:", err.message);
+            ctx.status = 500;
+            ctx.body = "Internal Server Error";
+          } else {
+            console.log("Text stored in database:", Body);
+            ctx.body = "Text received and stored successfully.";
+          }
+        }
+      );
+    } catch (error) {
+      console.error("Unexpected error:", error.message);
+      ctx.status = 500; // Internal Server Error
+      ctx.body = "Internal Server Error";
+    }
+});
+
+router.get("/api/texts", async (ctx) => {
   try {
-    // Use the SELECT statement to retrieve all entries
-    db.all("SELECT * FROM texts", (err, rows) => {
-      if (err) {
-        console.error("Error retrieving data from database:", err.message);
-        ctx.status = 500; // Internal Server Error
-        ctx.body = "Internal Server Error";
-      } else {
-        // Send the retrieved entries as the response
-        console.log(rows);
-        ctx.body = rows;
-      }
-    });
+    try {
+      const rows = await dbAllAsync(
+        "SELECT * FROM texts ORDER BY timestamp DESC"
+      );
+      ctx.status = 200;
+      ctx.type = "application/json";
+      ctx.body = JSON.stringify(rows);
+    } catch (err) {
+      console.error("Error retrieving data from database:", err.message);
+      ctx.status = 500; // Internal Server Error
+      ctx.body = "Internal Server Error";
+    }
   } catch (error) {
     console.error("Unexpected error:", error.message);
     ctx.status = 500; // Internal Server Error
@@ -126,17 +119,19 @@ router.get("/api/texts", async (ctx) => {
   }
 });
 
+// Health check endpoint
+router.get("/health", async (ctx) => {
+  ctx.status = 200;
+  ctx.body = "OK";
+});
+
 // Use the router middleware
 app.use(router.routes());
 app.use(router.allowedMethods());
 
+// Start the server
 const PORT = process.env.PORT || 3000;
 
-app.use(async (ctx) => {
-  ctx.body = "Hello World";
-});
-
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
