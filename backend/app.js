@@ -79,7 +79,12 @@ router.post("/api/sms", verifyPhoneNumber, async (ctx) => {
       // Store the received text in the SQLite database
       db.run(
         "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
-        [sanitizeInput(From), sanitizeInput(Body)],
+        [
+          sanitizeInput(From),
+          ctx.request.body.NumMedia > 0
+            ? ctx.request.body.MediaUrl0
+            : sanitizeInput(Body),
+        ],
         (err) => {
           if (err) {
             console.error("Error inserting into database:", err.message);
