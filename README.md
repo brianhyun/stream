@@ -19,24 +19,22 @@ Stream is a comprehensive messaging platform designed to seamlessly capture, org
 
 ## Features
 
-- Search for addresses using the Mapbox API and place markers on a map.
-- Calculate the geometric median of the addresses.
-- Recommend restaurants around the geometric median using the Yelp Fusion API.
-- User-friendly interface with interactive maps and restaurant listings.
+- Send messages to a Twilio-verified phone number and have them logged to a public site.
 
 ## Prerequisites
 
 - Node.js and npm installed on your system.
-- Mapbox API key.
-- Yelp Fusion API key.
+- Twilio phone number.
+- Twilio auth token and account SID.
+- ngrok auth token and static domain.
 
 ## Installation
 
 1. Clone the repository:
 
 ```
-git clone https://github.com/brianhyun/meet_in_the_middle.git
-cd meet_in_the_middle
+git clone https://github.com/brianhyun/stream.git
+cd stream
 ```
 
 2. Install dependencies for the frontend and backend:
@@ -50,44 +48,42 @@ npm install
 
 ## Usage
 
-1. Start the backend server:
+1. Start the frontend and backend servers:
 
-cd backend
-npm run dev
-
-2. Start the frontend development server:
-
-cd frontend
 npm run start
 
-3. Open your browser and navigate to `http://localhost:3001` to use the application.
+2. Open your browser and navigate to `http://localhost:PORT` at the PORT specified by the Remix prompt.
+
+3. Send a text to the Twilio phone number and refresh to view the latest message.
 
 ## API Keys
 
-To use the Mapbox API and Yelp Fusion API, you need to obtain API keys from Mapbox and Yelp.
+To use ngrok and the Twilio API, you need to obtain keys from ngrok and Twilio.
 
-1. Update the `.env` file in the `frontend` directory with your Mapbox API key:
+1. Update the `.env` file in the `backend` directory with your API keys:
 
-REACT_APP_MAPBOX_ACCESS_TOKEN=your_mapbox_api_key
-
-2. Update the `.env` files in the `env` directory of the `backend` directory with your API keys:
-
-YELP_API_KEY=your_yelp_api_key
+TWILIO_REGISTERED_PHONE_NUMBER=your_twilio_registered_phone_number
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=your_twilio_phone_number
+NGROK_AUTH_TOKEN=your_ngrok_auth_token
+NGROK_STATIC_DOMAIN=your_ngrok_static_domain
 
 ## Future Improvements and Development Plans
 
 ### Current Developments
 
-- Send message to phone number and store that phone number in the database.
+- Allow multimedia uploads, e.g., images and videos.
 
 ### Code Refactoring and Technical Enhancements
 
-- _express-generator-typescript_ is overkill; only a single route is needed for retrieving the restaurant data.
-- Move each section of the page to a separate file and use the context API to manage shared state across the components.
+- Move db, routes, and helper functions to separate directories.
 
 ### User Interface
 
--
+- Have the header fixed.
+- The list should not lengthen the page.
+- Have infinite scroll. Showing and additional 10 entries whenever the end is reached.
 
 ### Enhanced Accessibility
 
@@ -119,5 +115,5 @@ This project is licensed under the [MIT License](LICENSE.md) - see the [LICENSE.
 
 ## Acknowledgements
 
-- Thanks to Mapbox and Yelp for providing their APIs. All restaurant images are from the Yelp API.
-- Hat tip to the developers of React, Express.js, and other open-source libraries used in this project.
+- Thanks to ngrok and Twilio for providing their APIs.
+- Hat tip to the developers of React, Koa.js, SQLite and other open-source libraries used in this project.

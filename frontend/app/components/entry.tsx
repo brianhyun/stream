@@ -24,7 +24,7 @@ function convertUTCToLocalDateTime(utcTimestamp: string) {
 
 export default function Entry(props: EntryProps) {
   return (
-    <div className="rounded-lg px-3 py-2 bg-gray-100">
+    <div className="rounded-lg px-3 py-2 bg-gray-100 border border-gray-200">
       <p className="text-sm text-gray-500">
         {convertUTCToLocalDateTime(props.content.timestamp)}
       </p>

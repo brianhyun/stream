@@ -47,9 +47,9 @@ export default function Index() {
 
         <section id="entries">
           <div className="pb-4 border-b border-gray-200 mb-4">
-            <h1 className="font-medium text-lg">From Brian</h1>
+            <h1 className="font-medium text-lg">Personal log</h1>
             <p className="text-xs text-gray-600">
-              The messages that never made it out of my head.
+              Any and all thoughts logged straight from my phone.
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export default function Index() {
       </main>
 
       <footer className="fixed bottom-0 w-full px-4">
-        <div className="container max-w-lg mx-auto border-t border-gray-200 pt-4 pb-8 px-2 text-sm text-gray-400">
+        <div className="container max-w-lg mx-auto border-t backdrop-blur-sm bg-white/30 border-gray-200 pt-4 pb-8 px-2 text-sm text-gray-400">
           <p>
             Powered by the Twilio API. Built with Remix, React, Koa.js, and
             SQLite.
