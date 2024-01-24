@@ -99,11 +99,17 @@ router.post("/api/sms", verifyPhoneNumber, async (ctx) => {
 });
 
 router.get("/api/texts", async (ctx) => {
+  const { page } = ctx.request.query;
+  const offset = (page - 1) * 10;
+
   try {
     try {
       const rows = await dbAllAsync(
-        "SELECT * FROM texts ORDER BY timestamp DESC"
+        `SELECT * FROM texts ORDER BY timestamp DESC LIMIT 10 OFFSET ${offset}`
       );
+      console.log(rows);
+      console.log(rows.length);
+
       ctx.status = 200;
       ctx.type = "application/json";
       ctx.body = JSON.stringify(rows);

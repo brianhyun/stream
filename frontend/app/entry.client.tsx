@@ -11,8 +11,12 @@ import { hydrateRoot } from "react-dom/client";
 startTransition(() => {
   hydrateRoot(
     document,
-    <StrictMode>
+    process.env.NODE_ENV === "production" ? (
+      <StrictMode>
+        <RemixBrowser />
+      </StrictMode>
+    ) : (
       <RemixBrowser />
-    </StrictMode>
+    )
   );
 });
