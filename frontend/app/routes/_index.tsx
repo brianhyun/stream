@@ -85,7 +85,7 @@ export default function Index() {
             loader={<LoadingIcon />}
             endMessage={
               <button
-                className="w-full py-4 flex items-center justify-center group rounded-lg"
+                className="w-full py-4 flex items-center justify-center group rounded-xl"
                 onClick={() => {
                   const container = containerRef.current;
 

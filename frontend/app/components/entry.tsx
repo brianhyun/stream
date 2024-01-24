@@ -1,4 +1,9 @@
+import validator from "validator";
+import classNames from "classnames";
+import { Fragment, useState } from "react";
+
 import { Text } from "~/types";
+import LoadingIcon from "./loading-icon";
 
 interface EntryProps {
   content: Text;
@@ -23,12 +28,27 @@ function convertUTCToLocalDateTime(utcTimestamp: string) {
 }
 
 export default function Entry(props: EntryProps) {
+  const [imageLoading, setImageLoading] = useState(true);
+
   return (
-    <div className="rounded-lg px-3 py-2 bg-gray-100 border border-gray-200">
-      <p className="text-sm text-gray-500">
+    <div className="rounded-xl p-3 bg-gray-100 border border-gray-200">
+      <p className="text-sm text-gray-500 mb-2">
         {convertUTCToLocalDateTime(props.content.timestamp)}
       </p>
-      <p className="text-base text-gray-800">{props.content.message_body}</p>
+      {validator.isURL(props.content.message_body) ? (
+        <Fragment>
+          {imageLoading && <LoadingIcon />}
+          <img
+            src={props.content.message_body}
+            onLoad={() => setImageLoading(false)}
+            className={`rounded-xl overflow-hidden ${
+              imageLoading ? "hidden" : "block"
+            }`}
+          />
+        </Fragment>
+      ) : (
+        <p className="text-base text-gray-800">{props.content.message_body}</p>
+      )}
     </div>
   );
 }
