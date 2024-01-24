@@ -78,6 +78,8 @@ NGROK_STATIC_DOMAIN=your_ngrok_static_domain
 
 ### Current Developments
 
+- Allow editing of posts via phone.
+- Send confirmation message that message was posted.
 - Allow multimedia uploads, e.g., images and videos.
 
 ### Code Refactoring and Technical Enhancements
@@ -86,9 +88,7 @@ NGROK_STATIC_DOMAIN=your_ngrok_static_domain
 
 ### User Interface
 
-- Have the header fixed.
-- The list should not lengthen the page.
-- Have infinite scroll. Showing and additional 10 entries whenever the end is reached.
+-
 
 ### Enhanced Accessibility
 
