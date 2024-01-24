@@ -6,6 +6,7 @@ Stream is a comprehensive messaging platform designed to seamlessly capture, org
 
 ## Table of Contents
 
+- [Motivation](#motivation)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
@@ -16,6 +17,10 @@ Stream is a comprehensive messaging platform designed to seamlessly capture, org
 - [Project Credits and Development Timeline](#project-credits-and-development-timeline)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
+
+## Motivation
+
+This project is driven by the desire to explore new technologies like Remix for React, Koa.js for Node.js backends (an area I haven't extensively worked with), and SQLite. The goal is to gain practical experience and broaden skills in modern full-stack development.
 
 ## Features
 
