@@ -1,9 +1,12 @@
 import axios from "axios";
+import { HiChevronUp } from "react-icons/hi";
 import type { MetaFunction } from "@remix-run/node";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { useRef, useState, useEffect, Fragment } from "react";
 
 import { Text } from "~/types";
 import Entry from "~/components/entry";
+import LoadingIcon from "~/components/loading-icon";
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,6 +18,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   const [page, setPage] = useState(1);
   const [data, setData] = useState<Text[]>([]);
+  const [hasMore, setHasMore] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const fetchData = async () => {
@@ -22,9 +26,9 @@ export default function Index() {
       const response = await axios.get(
         `http://localhost:3000/api/texts?page=${page}`
       );
-
       console.log(response.data);
 
+      setHasMore(response.data.length);
       setData((prevValue) => [...prevValue, ...response.data]);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -61,7 +65,7 @@ export default function Index() {
           <div className="pb-4 border-b border-gray-200 mb-4">
             <h1 className="font-medium text-lg">Personal log</h1>
             <p className="text-xs text-gray-600">
-              Any and all thoughts logged straight from my phone.
+              Thoughts logged straight from my phone.
             </p>
           </div>
         </section>
@@ -69,13 +73,39 @@ export default function Index() {
         <section
           id="entries"
           ref={containerRef}
-          className="overflow-y-auto h-96	space-y-4"
+          className="overflow-y-auto h-96 scroll-smooth"
         >
-          {data && data.length
-            ? data.map((content) => (
-                <Entry key={content.id} content={content} />
-              ))
-            : "No data"}
+          <InfiniteScroll
+            next={fetchData}
+            hasMore={hasMore}
+            className="space-y-4"
+            dataLength={data.length}
+            loader={<LoadingIcon />}
+            endMessage={
+              <button
+                className="w-full py-4 flex items-center justify-center group rounded-lg"
+                onClick={() => {
+                  const container = containerRef.current;
+
+                  if (container) {
+                    container.scrollTo(0, 0);
+                  }
+                }}
+              >
+                <HiChevronUp
+                  size={20}
+                  className="text-gray-500 group-hover:text-gray-600 mr-1"
+                />
+                <p className="text-xs uppercase font-bold text-gray-500 group-hover:text-gray-600 tracking-wide">
+                  Back to top
+                </p>
+              </button>
+            }
+          >
+            {data.map((content) => (
+              <Entry key={content.id} content={content} />
+            ))}
+          </InfiniteScroll>
         </section>
       </main>
 

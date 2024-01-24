@@ -28,7 +28,7 @@ export default function Entry(props: EntryProps) {
       <p className="text-sm text-gray-500">
         {convertUTCToLocalDateTime(props.content.timestamp)}
       </p>
-      {props.content.message_body}
+      <p className="text-base text-gray-800">{props.content.message_body}</p>
     </div>
   );
 }
