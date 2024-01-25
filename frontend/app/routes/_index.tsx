@@ -58,6 +58,7 @@ export default function Index() {
 
         <section
           id="scrollableDiv"
+          ref={containerRef}
           className="overflow-y-auto h-screen scroll-smooth"
         >
           <InfiniteScroll
