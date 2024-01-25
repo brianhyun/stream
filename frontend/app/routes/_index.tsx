@@ -49,9 +49,7 @@ export default function Index() {
           <div className="pb-4 border-b border-gray-200 mb-4">
             <h1 className="font-medium text-lg">Personal log</h1>
             <p className="text-xs text-gray-600">
-              My thoughs broadcasted to the world straight from my phone. No
-              social media account required. Yup, Twitter and Threads, I'm
-              talking to you. Just a simple internet connection is required.
+              My thoughs broadcasted to the world straight from my phone.
             </p>
           </div>
         </section>

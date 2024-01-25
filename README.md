@@ -76,11 +76,16 @@ NGROK_STATIC_DOMAIN=your_ngrok_static_domain
 
 ## Future Improvements and Development Plans
 
-### Current Developments
+### Developments
 
-- Allow editing of posts via phone.
-- Send confirmation message that message was posted.
-- Allow multimedia uploads, e.g., images and videos.
+- [] Send confirmation message that message was posted.
+- [] Allow editing of posts via phone.
+- [] Allow multimedia uploads, e.g., images and videos.
+  - [x] Allow image uploads
+  - [] Allow video uploads
+- [x] Create route for Twilio webhook that stores message in DB
+- [x] Configure Koa.js for backend
+- [x] Configure Remix with React for frontend
 
 ### Code Refactoring and Technical Enhancements
 
@@ -88,7 +93,8 @@ NGROK_STATIC_DOMAIN=your_ngrok_static_domain
 
 ### User Interface
 
--
+- [x] Add "Back to Top" button at the end of infinite scroll
+- [x] Configure infinite scroll
 
 ### Enhanced Accessibility
 
