@@ -28,8 +28,11 @@ export default function Index() {
       );
       console.log(response.data);
 
-      setHasMore(response.data.length);
-      setData((prevValue) => [...prevValue, ...response.data]);
+      // Boolean must be applied or 0 is shown.
+      setHasMore(Boolean(response.data.length));
+      setData((prevValue) =>
+        response.data.length ? [...prevValue, ...response.data] : prevValue
+      );
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -39,25 +42,6 @@ export default function Index() {
     fetchData();
   }, [page]);
 
-  const handleScroll = () => {
-    const container = containerRef.current;
-
-    if (
-      container &&
-      container.scrollHeight - container.scrollTop === container.clientHeight
-    )
-      setPage((prevPage) => prevPage + 1);
-  };
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) container.addEventListener("scroll", handleScroll);
-
-    return () => {
-      if (container) container.removeEventListener("scroll", handleScroll);
-    };
-  }, [containerRef]);
-
   return (
     <Fragment>
       <main className="container max-w-lg mx-auto py-8 px-4">
@@ -65,33 +49,30 @@ export default function Index() {
           <div className="pb-4 border-b border-gray-200 mb-4">
             <h1 className="font-medium text-lg">Personal log</h1>
             <p className="text-xs text-gray-600">
-              My thoughs broadcasted to world straight from my phone. No social
-              media account required. Yup, Twitter and Threads, I'm talking to
-              you. Just a simple internet connection is required.
+              My thoughs broadcasted to the world straight from my phone. No
+              social media account required. Yup, Twitter and Threads, I'm
+              talking to you. Just a simple internet connection is required.
             </p>
           </div>
         </section>
 
         <section
-          id="entries"
-          ref={containerRef}
-          className="overflow-y-auto h-96 scroll-smooth"
+          id="scrollableDiv"
+          className="overflow-y-auto h-screen scroll-smooth"
         >
           <InfiniteScroll
-            next={fetchData}
             hasMore={hasMore}
             className="space-y-4"
             dataLength={data.length}
             loader={<LoadingIcon />}
+            scrollableTarget="scrollableDiv"
+            next={() => setPage((prevPage) => prevPage + 1)}
             endMessage={
               <button
                 className="w-full py-4 flex items-center justify-center group rounded-xl"
                 onClick={() => {
                   const container = containerRef.current;
-
-                  if (container) {
-                    container.scrollTo(0, 0);
-                  }
+                  if (container) container.scrollTo(0, 0);
                 }}
               >
                 <HiChevronUp
