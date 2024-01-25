@@ -32,6 +32,7 @@ db.run(`
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         sender_phone_number TEXT,
         message_body TEXT,
+        image_url TEXT, 
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )
 `);
@@ -74,16 +75,21 @@ const dbAllAsync = util.promisify(db.all.bind(db));
 router.post("/api/sms", verifyPhoneNumber, async (ctx) => {
   const { From, Body } = ctx.request.body;
 
+  console.log("body:", Body);
+  console.log(
+    "media?: ",
+    ctx.request.body.NumMedia > 0 ? ctx.request.body.MediaUrl0 : "nothing"
+  );
+
   if (From === process.env.TWILIO_REGISTERED_PHONE_NUMBER)
     try {
       // Store the received text in the SQLite database
       db.run(
-        "INSERT INTO texts (sender_phone_number, message_body) VALUES (?, ?)",
+        "INSERT INTO texts (sender_phone_number, message_body, image_url) VALUES (?, ?, ?)",
         [
           sanitizeInput(From),
-          ctx.request.body.NumMedia > 0
-            ? ctx.request.body.MediaUrl0
-            : sanitizeInput(Body),
+          Body ? sanitizeInput(Body) : null,
+          ctx.request.body.NumMedia > 0 ? ctx.request.body.MediaUrl0 : null,
         ],
         (err) => {
           if (err) {
@@ -112,8 +118,6 @@ router.get("/api/texts", async (ctx) => {
       const rows = await dbAllAsync(
         `SELECT * FROM texts ORDER BY timestamp DESC LIMIT 10 OFFSET ${offset}`
       );
-      console.log(rows);
-      console.log(rows.length);
 
       ctx.status = 200;
       ctx.type = "application/json";
