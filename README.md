@@ -80,6 +80,8 @@ NGROK_STATIC_DOMAIN=your_ngrok_static_domain
 
 - [] Send confirmation message that message was posted.
 - [] Allow editing of posts via phone.
+- [x] Save image and text if both are provided in a single message.
+  - [] Save multiple images in the database if multiple are provided.
 - [] Allow multimedia uploads, e.g., images and videos.
   - [x] Allow image uploads
   - [] Allow video uploads
